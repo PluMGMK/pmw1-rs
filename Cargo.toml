@@ -5,6 +5,8 @@ authors = ["PluMGMK"]
 edition = "2018"
 license-file = "LICENCE.TXT"
 description = "A library for manipulating executables in the PMW1 format, which offers EXE compression and is used by the PMODE/W DOS extender. Currently requires nightly Rust due to use of inline assembly."
+repository = "https://github.com/PluMGMK/pmw1-rs"
+readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
