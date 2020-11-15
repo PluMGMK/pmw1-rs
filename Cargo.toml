@@ -1,6 +1,6 @@
 [package]
 name = "pmw1"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["PluMGMK"]
 edition = "2018"
 license-file = "LICENCE.TXT"
