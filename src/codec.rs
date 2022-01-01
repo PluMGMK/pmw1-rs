@@ -72,6 +72,7 @@ pub fn decode(coded_buf: &[u8], expected_size: usize) -> Result<Vec<u8>> {
     //    two cmps in "decode_getbit" use slightly different addresses because they're inside a
     //    subroutine and so the stack pointer will be four bytes lower.
     #[cfg(target_pointer_width = "32")]
+    #[allow(named_asm_labels)]
     unsafe{asm!("
         push ebp
         call decode
@@ -273,9 +274,12 @@ _endinline:
     // Here's a 64-bit version, taking advantage of extra registers so the stack is no longer
     // involved in the bounds checks!
     #[cfg(target_pointer_width = "64")]
+    #[allow(named_asm_labels)]
     unsafe{asm!("
         push rbp
+        push rbx
         call decode
+        pop rbx
         pop rbp
         jmp _endinline
 
@@ -461,7 +465,6 @@ _endinline:
         in("r10") dest_bufhead,
         in("r11") dest_bufend,
         out("rax") _,
-        out("rbx") _,
         out("rcx") _,
         out("rdx") _,
             );
@@ -635,11 +638,11 @@ pub fn encode(source_buf: &[u8], probes: usize) -> Result<Vec<u8>> {
                         unsafe{
                             asm!("
                             xor eax,eax
-                            mov ebx,ecx
+                            mov edx,ecx
                             repe cmpsb
                             setne al
                             add ecx,eax
-                            sub ebx,ecx
+                            sub edx,ecx
                             ",
                             // Use the "rXX" registers to make sure they work on 64-bit. Seems to
                             // still work on 32-bit...
@@ -647,7 +650,7 @@ pub fn encode(source_buf: &[u8], probes: usize) -> Result<Vec<u8>> {
                             inout("rsi") source_buf.as_ptr().add(l_pos.get()) => _,
                             inout("rcx") (if l_size.get() < 270 {l_size.get()} else {270}) => _,
                             out("rax") _,
-                            out("rbx") i1);
+                            out("rdx") i1);
                         }
 
                         if ((i1 == 2) && (i0 >= 0x800)) || (i0 >= 0x1000) {
