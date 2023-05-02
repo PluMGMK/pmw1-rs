@@ -13,6 +13,7 @@
   */
 
 use std::collections::HashMap;
+use std::arch::asm;
 
 // For moving stuff around between various closures in the "compress" function. I'm definitely not
 // a fan of how this was done with global variables in the original C code!
